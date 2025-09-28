@@ -26,7 +26,7 @@ export default function HomePage() {
       delay: 0,
     })
     fetchPosts() 
-  }, [])
+  }, [fetchPosts])
 
   const fetchPosts = useCallback(async (searchValue = '') => {
     if (abortControllerRef.current) {

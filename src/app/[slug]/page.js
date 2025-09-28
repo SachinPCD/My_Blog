@@ -1,5 +1,6 @@
 import { getPostBySlug } from '@/lib/mongodb'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -117,7 +118,7 @@ const markdownComponents = {
       className="border-l-4 border-blue-500 pl-6 italic text-gray-600 my-8 bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-r-2xl shadow-sm"
       data-aos="fade-up"
     >
-      <div className="text-blue-500 text-4xl mb-2">"</div>
+      <div className="text-blue-500 text-4xl mb-2">&ldquo;</div>
       {children}
     </blockquote>
   ),
@@ -253,7 +254,7 @@ export default async function BlogPost({ params }) {
             <div className="max-w-6xl mx-auto w-full px-4 pb-12">
               {/* Back Button */}
               <div className="mb-8" data-aos="fade-right" data-aos-delay="200">
-                <a 
+                <Link 
                   href="/"
                   className="inline-flex items-center text-white/90 hover:text-white font-semibold backdrop-blur-sm bg-black/40 px-6 py-3 rounded-full transition-all duration-300 hover:bg-black/60 hover:scale-105 cursor-pointer group/back"
                 >
@@ -261,7 +262,7 @@ export default async function BlogPost({ params }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                   Back to Articles
-                </a>
+                </Link>
               </div>
 
               {/* Title and Meta */}
@@ -375,7 +376,7 @@ export default async function BlogPost({ params }) {
                     </div>
                     <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent mb-4">Content Coming Soon</h3>
                     <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                      We're working on bringing you the full content for this article. 
+                      We&rsquo;re working on bringing you the full content for this article. 
                       Check back soon for updates!
                     </p>
                     <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-2xl p-6 shadow-lg">
@@ -422,7 +423,7 @@ export default async function BlogPost({ params }) {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <a 
+                  <Link 
                     href="/"
                     className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl cursor-pointer group/cta"
                   >
@@ -430,7 +431,7 @@ export default async function BlogPost({ params }) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     Explore More Articles
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -443,14 +444,14 @@ export default async function BlogPost({ params }) {
           <ScrollToTopButton />
 
           {/* Back to Articles */}
-          <a 
+          <Link 
             href="/"
             className="bg-gradient-to-r from-gray-700 to-gray-900 text-white p-4 rounded-2xl shadow-2xl hover:from-gray-800 hover:to-black transition-all duration-300 transform hover:scale-110 cursor-pointer group lg:hidden"
           >
             <svg className="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-          </a>
+          </Link>
         </div>
 
         {/* Progress Bar */}

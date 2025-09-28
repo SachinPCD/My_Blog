@@ -82,7 +82,7 @@ export default function CreateBlogPage() {
     if (session?.user?.email) {
       fetchUserPosts()
     }
-  }, [session])
+  }, [session, fetchUserPosts])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function CreateBlogPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [showProfileDropdown, showImageModal])
 
-  const fetchUserPosts = async () => {
+  const fetchUserPosts = useCallback(async () => {
     try {
       setIsLoading(true)
       const res = await fetch(`/api/blogposts/author?email=${session.user.email}`)
@@ -113,7 +113,7 @@ export default function CreateBlogPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [session?.user?.email])
 
   const handleLogout = async () => {
     await signOut({ redirect: false })
@@ -444,7 +444,7 @@ export default function CreateBlogPage() {
     img({ node, ...props }) {
       return (
         <span className="inline-block my-6 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-full">
-          <img {...props} className="w-full h-auto object-cover block" />
+          <img {...props} alt={props.alt || ''} className="w-full h-auto object-cover block" />
         </span>
       )
     },
