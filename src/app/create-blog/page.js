@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef,useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import ReactMarkdown from 'react-markdown'
@@ -10,9 +10,11 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 
 export default function CreateBlogPage() {
+  // Initialize hooks and ensure proper variable initialization
   const { data: session, status } = useSession()
   const router = useRouter()
   
+  // Initialize state variables
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -47,7 +49,24 @@ export default function CreateBlogPage() {
     })
   }, [])
 
-  // Array of high-quality background images for blog cover
+  // Define fetchUserPosts before it's used in useEffect
+  const fetchUserPosts = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const res = await fetch(`/api/blogposts/author?email=${session?.user?.email}`)
+      const data = await res.json()
+      
+      if (res.ok) {
+        setUserPosts(data)
+      }
+    } catch (error) {
+      console.error('Error fetching user posts:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [session?.user?.email])
+
+  // Declare arrays before use to prevent temporal dead zone issues
   const backgroundImages = [
     'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2072&q=80',
     'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
@@ -98,22 +117,6 @@ export default function CreateBlogPage() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [showProfileDropdown, showImageModal])
-
-  const fetchUserPosts = useCallback(async () => {
-    try {
-      setIsLoading(true)
-      const res = await fetch(`/api/blogposts/author?email=${session.user.email}`)
-      const data = await res.json()
-      
-      if (res.ok) {
-        setUserPosts(data)
-      }
-    } catch (error) {
-      console.error('Error fetching user posts:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [session?.user?.email])
 
   const handleLogout = async () => {
     await signOut({ redirect: false })
@@ -423,28 +426,31 @@ export default function CreateBlogPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  // Define markdown components safely
   const markdownComponents = {
-    code({ node, inline, className, children, ...props }) {
+    code(props) {
+      const { node, inline, className, children, ...otherProps } = props
       const match = /language-(\w+)/.exec(className || '')
       return !inline && match ? (
         <SyntaxHighlighter
           style={atomDark}
           language={match[1]}
           PreTag="div"
-          {...props}
+          {...otherProps}
         >
           {String(children).replace(/\n$/, '')}
         </SyntaxHighlighter>
       ) : (
-        <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono" {...props}>
+        <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono" {...otherProps}>
           {children}
         </code>
       )
     },
-    img({ node, ...props }) {
+    img(props) {
+      const { node, ...otherProps } = props
       return (
         <span className="inline-block my-6 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-full">
-          <img {...props} alt={props.alt || ''} className="w-full h-auto object-cover block" />
+          <img {...otherProps} alt={otherProps.alt || ''} className="w-full h-auto object-cover block" />
         </span>
       )
     },
@@ -477,6 +483,18 @@ export default function CreateBlogPage() {
         <div className="text-center" data-aos="zoom-in">
           <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 font-medium">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show loading state while checking authentication
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     )

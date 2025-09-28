@@ -16,18 +16,6 @@ export default function HomePage() {
   const abortControllerRef = useRef(null)
   const router = useRouter()
 
-  useEffect(() => {
-    // Initialize AOS
-    AOS.init({
-      duration: 800,
-      easing: 'ease-out-cubic',
-      once: true,
-      offset: 50,
-      delay: 0,
-    })
-    fetchPosts() 
-  }, [fetchPosts])
-
   const fetchPosts = useCallback(async (searchValue = '') => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
@@ -80,6 +68,19 @@ export default function HomePage() {
       setFuse(fuseInstance)
     }
   }, [posts])
+
+  // Initialize AOS and fetch initial posts
+  useEffect(() => {
+    // Initialize AOS
+    AOS.init({
+      duration: 800,
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 50,
+      delay: 0,
+    })
+    fetchPosts() 
+  }, [fetchPosts])
 
   const handleSearch = useCallback((value) => {
     setSearch(value)
