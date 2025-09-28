@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb' //
 export async function DELETE(request, { params }) {
   try {
     const { id } = params
-    const { db } = await connectDBWithRetry()
+    const db = await connectDBWithRetry()
     
     const result = await db.collection('blogposts').deleteOne({ _id: new ObjectId(id) })
     
