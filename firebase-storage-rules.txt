@@ -1,0 +1,58 @@
+// 🔥 Firebase Storage Rules for Blog App
+// IMPORTANT: Copy these rules to Firebase Console > Storage > Rules
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow read access to all users (for viewing blog images)
+    match /{allPaths=**} {
+      allow read: if true;
+    }
+    
+    // Allow authenticated users to upload to blog-images folder
+    match /blog-images/{allPaths=**} {
+      allow write: if request.auth != null
+                   && request.resource.size < 10 * 1024 * 1024 // Max 10MB
+                   && request.resource.contentType.matches('image/.*'); // Only images
+    }
+    
+    // Allow public uploads for development (TEMPORARY - REMOVE IN PRODUCTION)
+    match /blog-images/{imageId} {
+      allow write: if resource == null 
+                   && request.resource.size < 10 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+  }
+}
+
+/* 
+🚀 SETUP INSTRUCTIONS:
+1. Go to: https://console.firebase.google.com/project/blogapp-46aa1/storage
+2. If Storage is not enabled, click "Get Started" 
+3. Choose "Start in test mode" for now
+4. Click "Done"
+5. Go to "Rules" tab
+6. Replace existing rules with the rules above
+7. Click "Publish"
+
+🛡️ SECURITY NOTE:
+- The temporary public upload rule is for development only
+- Remove it in production and ensure proper authentication
+*/
+
+/* 
+Instructions:
+1. Go to Firebase Console (https://console.firebase.google.com/)
+2. Select your project: blogapp-46aa1
+3. Navigate to Storage in the left sidebar
+4. Click on "Rules" tab
+5. Replace the existing rules with the rules above
+6. Click "Publish" to apply the changes
+
+These rules ensure:
+- Anyone can read/view images (for blog visitors)
+- Only authenticated users can upload images
+- Files must be under 5MB
+- Only image files are allowed
+- All uploads go to the blog-images folder
+*/

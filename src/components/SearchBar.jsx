@@ -75,7 +75,7 @@ export default function SearchBar({ value, onSearch, isLoading = false }) {
       <button
         type="submit"
         disabled={isLoading}
-        className="bg-blue-600 text-white font-bold py-3 px-6 rounded-r-xl hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+        className="bg-blue-600 text-white font-bold py-3 px-6 rounded-r-xl hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 cursor-pointer"
       >
         {isLoading ? 'Searching...' : 'Search'}
       </button>

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { connectDB } from '@/lib/mongodb'
+import { connectDBWithRetry } from '@/lib/mongodb'
 
 export async function POST(request) {
   try {
@@ -13,12 +13,7 @@ export async function POST(request) {
         { status: 400 }
       )
     }
-            async function testDB() {
-            const db = await connectDB()
-            console.log('Connected to DB:', db.databaseName)
-            }
-            testDB()
-    const db = await connectDB()
+    const { db } = await connectDBWithRetry()
     
     // Check if slug already exists
     const existingPost = await db.collection('blogposts').findOne({ slug })
@@ -63,7 +58,7 @@ export async function POST(request) {
 
 export async function GET() {
   try {
-    const db = await connectDB()
+    const { db } = await connectDBWithRetry()
     const posts = await db.collection('blogposts')
       .find({})
       .sort({ publishedAt: -1 })

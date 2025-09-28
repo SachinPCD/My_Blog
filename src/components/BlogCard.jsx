@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 
 export default function BlogCard({ post }) {
   const [date, setDate] = useState('')
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const fallbackImage =
+    "https://res.cloudinary.com/muhammederdem/image/upload/v1535759872/kuldar-kalvik-799168-unsplash.jpg"
 
   useEffect(() => {
     if (post.publishedAt) {
@@ -14,19 +17,31 @@ export default function BlogCard({ post }) {
   return (
     <div className="w-full max-w-4xl mx-auto my-8 bg-white shadow-2xl rounded-3xl p-8 transition-all duration-300 hover:shadow-3xl">
       <div className="flex items-center lg:flex-row flex-col">
+        
         {/* Image Container */}
         <div className="lg:w-[300px] lg:flex-shrink-0 lg:h-[300px] lg:-translate-x-20 lg:mb-0 mb-8 w-full h-64 -translate-y-20 lg:translate-y-0">
           <div className="relative w-full h-full rounded-2xl shadow-2xl overflow-hidden">
+            
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-red-500 opacity-80 rounded-2xl z-10"></div>
+            {/* <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-red-500 opacity-80 rounded-2xl z-10"></div> */}
+            
             <img 
-              src={post.image || "https://res.cloudinary.com/muhammederdem/image/upload/v1535759872/kuldar-kalvik-799168-unsplash.jpg"} 
+              src={post.image && post.image.trim() !== "" ? post.image : fallbackImage}
               alt={post.title}
-              className="w-full h-full object-cover rounded-2xl relative z-0"
-              onError={(e) => {
-                e.target.src = "https://res.cloudinary.com/muhammederdem/image/upload/v1535759872/kuldar-kalvik-799168-unsplash.jpg"
+              className={`w-full h-full object-cover rounded-2xl relative z-10 transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onError={(e) => { 
+                e.target.src = fallbackImage
+                setImageLoaded(true)
               }}
+              onLoad={() => setImageLoaded(true)}
             />
+            
+            {/* Loading overlay */}
+            {!imageLoaded && (
+              <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-2xl flex items-center justify-center z-5">
+                <div className="w-8 h-8 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -41,7 +56,7 @@ export default function BlogCard({ post }) {
           </p>
           <Link 
             href={`/${post.slug}`}
-            className="inline-flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-4 px-8 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1"
+            className="inline-flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-4 px-8 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
           >
             READ MORE
           </Link>
