@@ -94,14 +94,25 @@ export default function HomePage() {
 
   // Initialize AOS and fetch initial posts
   useEffect(() => {
-    // Initialize AOS
-    AOS.init({
-      duration: 800,
-      easing: 'ease-out-cubic',
-      once: true,
-      offset: 50,
-      delay: 0,
-    })
+    // Initialize AOS dynamically to avoid SSR issues
+    const initAOS = async () => {
+      try {
+        const AOS = (await import('aos')).default
+        await import('aos/dist/aos.css')
+        
+        AOS.init({
+          duration: 800,
+          easing: 'ease-out-cubic',
+          once: true,
+          offset: 50,
+          delay: 0,
+        })
+      } catch (error) {
+        console.warn('AOS initialization failed:', error)
+      }
+    }
+    
+    initAOS()
     fetchPosts() 
   }, [fetchPosts])
 
