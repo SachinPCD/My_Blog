@@ -77,6 +77,24 @@ export default function CreateBlogPage() {
     }
   }, [status, router])
 
+  // Move fetchUserPosts declaration BEFORE the useEffect that uses it
+  const fetchUserPosts = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const res = await fetch(`/api/blogposts/author?email=${session?.user?.email}`)
+      const data = await res.json()
+      
+      if (res.ok) {
+        setUserPosts(data)
+      }
+    } catch (error) {
+      console.error('Error fetching user posts:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [session?.user?.email])
+
+  // NOW the useEffect can safely use fetchUserPosts in its dependency array
   // Fetch user's previous posts
   useEffect(() => {
     if (session?.user?.email) {
@@ -98,22 +116,6 @@ export default function CreateBlogPage() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [showProfileDropdown, showImageModal])
-
-  const fetchUserPosts = useCallback(async () => {
-    try {
-      setIsLoading(true)
-      const res = await fetch(`/api/blogposts/author?email=${session.user.email}`)
-      const data = await res.json()
-      
-      if (res.ok) {
-        setUserPosts(data)
-      }
-    } catch (error) {
-      console.error('Error fetching user posts:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [session?.user?.email])
 
   const handleLogout = async () => {
     await signOut({ redirect: false })

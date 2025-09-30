@@ -13,7 +13,9 @@ export async function POST(request) {
         { status: 400 }
       )
     }
-    const { db } = await connectDBWithRetry()
+    
+    // Connect to database - returns db object directly, not { db }
+    const db = await connectDBWithRetry()
     
     // Check if slug already exists
     const existingPost = await db.collection('blogposts').findOne({ slug })
@@ -58,7 +60,8 @@ export async function POST(request) {
 
 export async function GET() {
   try {
-    const { db } = await connectDBWithRetry()
+    // Connect to database - returns db object directly, not { db }
+    const db = await connectDBWithRetry()
     const posts = await db.collection('blogposts')
       .find({})
       .sort({ publishedAt: -1 })

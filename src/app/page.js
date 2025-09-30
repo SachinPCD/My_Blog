@@ -4,8 +4,6 @@ import { useRouter } from 'next/navigation'
 import BlogList from '@/components/BlogList'
 import SearchBar from '@/components/SearchBar'
 import Fuse from 'fuse.js'
-import AOS from 'aos'
-import 'aos/dist/aos.css'
 
 export default function HomePage() {
   const [posts, setPosts] = useState([])
@@ -16,18 +14,7 @@ export default function HomePage() {
   const abortControllerRef = useRef(null)
   const router = useRouter()
 
-  useEffect(() => {
-    // Initialize AOS
-    AOS.init({
-      duration: 800,
-      easing: 'ease-out-cubic',
-      once: true,
-      offset: 50,
-      delay: 0,
-    })
-    fetchPosts() 
-  }, [fetchPosts])
-
+  // Move fetchPosts declaration BEFORE the useEffect that uses it
   const fetchPosts = useCallback(async (searchValue = '') => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
@@ -62,6 +49,30 @@ export default function HomePage() {
       setIsLoading(false)
     }
   }, [])
+
+  // NOW the useEffect can safely use fetchPosts in its dependency array
+  useEffect(() => {
+    // Initialize AOS dynamically to avoid temporal dead zone issues
+    const initAOS = async () => {
+      try {
+        const AOS = (await import('aos')).default
+        await import('aos/dist/aos.css')
+        
+        AOS.init({
+          duration: 800,
+          easing: 'ease-out-cubic',
+          once: true,
+          offset: 50,
+          delay: 0,
+        })
+      } catch (error) {
+        console.warn('AOS initialization failed:', error)
+      }
+    }
+    
+    initAOS()
+    fetchPosts() 
+  }, [fetchPosts])
 
   useEffect(() => {
     if (posts && posts.length > 0) {
