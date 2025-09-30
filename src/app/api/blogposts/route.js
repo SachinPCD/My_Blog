@@ -19,24 +19,10 @@ export async function POST(request) {
       )
     }
 
-    console.log('🔗 Attempting database connection...')
+    
+    // Connect to database - returns db object directly, not { db }
     const db = await connectDBWithRetry()
-    
-    console.log('🔍 Database result type:', typeof db)
-    console.log('🔍 Database result value:', db)
-    console.log('🔍 Database is truthy:', !!db)
-    
-    if (!db) {
-      console.error('❌ Database connection failed - db is null/undefined')
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      )
-    }
-    
-    console.log('✅ Database connected successfully')
-    console.log('🔍 Database constructor:', db.constructor?.name)
-    console.log('🔍 Database has collection method:', typeof db.collection)
+
     
     // Check if slug already exists
     console.log('🔍 Checking for existing post with slug:', slug)
